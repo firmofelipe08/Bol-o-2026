@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>🏆 Chaveamento - Mundial 2026</title>
+            <style>
+            :root {
+                --gold-primary: #cda250;
+                --gold-light: #f3e1b9;
+                --bg-dark: #0a0a0e;
+                --bg-card: #0d0d14;
+                --text-light: #f5f5f7;
+            }
+            body {
+                font-family: 'Impact', 'Segoe UI', sans-serif; 
+                background: radial-gradient(circle at center, #16161f 0%, var(--bg-dark) 100%);
+                color: var(--text-light); margin: 0; padding: 20px;
+                overflow-x: hidden;
+            }
+            .container { max-width: 100%; margin: auto; }
+            header {
+                padding: 30px; text-align: center; 
+                background: linear-gradient(180deg, rgba(20,20,26,0.95) 0%, rgba(10,10,14,0.95) 100%);
+                border-radius: 12px; border: 1px solid rgba(205, 162, 80, 0.25);
+                margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            }
+            header h1 { 
+                margin: 0; font-size: 3.8em;
+                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, #835f20) 100%;
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                letter-spacing: 3px; text-transform: uppercase;
+            }
+            header p {
+                margin: 8px 0 0 0; font-size: 0.95em; font-family: 'Segoe UI', sans-serif;
+                color: var(--gold-primary); text-transform: uppercase; letter-spacing: 5px; font-weight: bold;
+            }
+            .nav-container { display: flex; justify-content: center; padding: 15px; }
+            .nav-btn { 
+                background: transparent; color: var(--gold-primary); padding: 12px 35px; 
+                text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 0.9em;
+                font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;
+                border: 2px solid var(--gold-primary); transition: all 0.3s ease;
+            }
+            .nav-btn:hover { background: var(--gold-primary); color: #000; box-shadow: 0 0 25px rgba(205, 162, 80, 0.4); }
+            .bracket-wrapper {
+                display: flex; justify-content: space-between; align-items: center; 
+                width: 100%; overflow-x: auto; padding: 30px 10px; box-sizing: border-box; position: relative;
+            }
+            .bracket-column {
+                display: flex; flex-direction: column; justify-content: space-around; 
+                height: 880px; width: 175px; position: relative;
+            }
+            .bracket-column.center-column { width: 240px; justify-content: center; gap: 10px; position: relative; }
+            .bracket-column:nth-child(1)::after, .bracket-column:nth-child(2)::after, .bracket-column:nth-child(3)::after {
+                content: ""; position: absolute; top: 40px; bottom: 40px; right: -12px;
+                width: 0; border-right: 2px dashed rgba(205, 162, 80, 0.35); z-index: 1; pointer-events: none;
+            }
+            .bracket-column:nth-child(7)::after, .bracket-column:nth-child(8)::after, .bracket-column:nth-child(9)::after {
+                content: ""; position: absolute; top: 40px; bottom: 40px; left: -12px;
+                width: 0; border-left: 2px dashed rgba(205, 162, 80, 0.35); z-index: 1; pointer-events: none;
+            }
+            .bracket-column.center-column::after { display: none; }
+            .match-node {
+                background: var(--bg-card); border: 1.5px solid rgba(205, 162, 80, 0.4);
+                border-radius: 8px; padding: 10px 8px; text-align: center;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); width: 100%; box-sizing: border-box;
+                position: relative; z-index: 2;
+            }
+            .match-node:hover { border-color: var(--gold-primary); transform: scale(1.03); transition: all 0.2s ease; }
+            .match-node-title {
+                color: var(--gold-primary); font-size: 0.75em; margin-bottom: 8px; 
+                letter-spacing: 1px; opacity: 0.8; font-family: 'Segoe UI', sans-serif; font-weight: bold;
+            }
+            .match-node-teams { display: flex; flex-direction: column; gap: 10px; position: relative; }
+            .match-team-box { display: flex; align-items: center; gap: 8px; justify-content: flex-start; text-align: left; }
+            .bracket-column:nth-child(n+6) .match-team-box { flex-direction: row-reverse; text-align: right; }
+            .team-flag { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+            .team-flag-placeholder { width: 32px; height: 22px; background: #222; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; }
+            .match-node-team { color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Segoe UI', sans-serif; font-size: 0.85em; font-weight: bold; flex-grow: 1; }
+            .match-node-vs { color: var(--gold-light); font-size: 0.85em; font-weight: bold; background: #1a1a26; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(205,162,80,0.3); width: fit-content; margin: 4px auto; font-family: 'Consolas', monospace; }
+            .match-node.has-result { border-color: var(--gold-light); border-width: 1.5px; }
+            .match-node.has-result .match-node-vs { color: #fff; background: #906b27; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+            .trophy-container { text-align: center; margin-top: 25px; z-index: 2; width: 100%; position: relative; }
+            .trophy-svg { width: 100px; height: auto; filter: drop-shadow(0 0 15px rgba(243, 225, 185, 0.4)); animation: floatTrophy 4s ease-in-out infinite; }
+            @keyframes floatTrophy {
+                0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 15px rgba(205, 162, 80, 0.4)); }
+                50% { transform: translateY(-8px); filter: drop-shadow(0 0 25px rgba(243, 225, 185, 0.7)); }
+            }
+            .section-title { color: var(--gold-primary); text-align: center; text-transform: uppercase; margin-top: 40px; font-size: 1.6em; letter-spacing: 2px; border-bottom: 1px solid rgba(205, 162, 80, 0.3); padding-bottom: 10px; }
+            .content-section { padding: 0 15px 25px 15px; }
+            .table-wrapper { max-height: 400px; overflow-y: auto; border: 1px solid rgba(205, 162, 80, 0.2); border-radius: 8px; background: rgba(10, 10, 14, 0.9); }
+            table { width: 100%; border-collapse: collapse; font-family: 'Segoe UI', sans-serif; }
+            th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.03); }
+            th { background-color: #050508; color: var(--gold-primary); text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
+            details { background: var(--bg-card); border: 1px solid rgba(205, 162, 80, 0.2); border-left: 4px solid var(--gold-primary); margin-bottom: 12px; border-radius: 6px; padding: 15px; font-family: 'Segoe UI', sans-serif; }
+            .guesses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+            .guess-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(205, 162, 80, 0.1); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+            .palpite-valor { color: #000; font-weight: bold; background: var(--gold-primary); padding: 4px 12px; border-radius: 4px;}
+            .pos { font-weight: bold; text-align: center; color: var(--gold-primary); }
+            .pts { font-weight: bold; color: var(--gold-light); }
+            footer { text-align: center; padding: 30px; font-size: 0.8em; color: rgba(255,255,255,0.2); font-family: 'Segoe UI', sans-serif; }
+            </style></head><body><div class="container">
+            <header><h1>MUNDIAL 2026</h1><p>RUMBO A LA GLORIA • CHAVEAMENTO MATA-MATA</p></header>
+            <div class="nav-container"><a href="index.html" class="nav-btn">⬅️ VOLTAR PARA O RANKING GLOBAL</a></div>
+            
+            <div class="bracket-wrapper">
+                <div class="bracket-column">
+                    
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 101</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/de.png" class="team-flag" alt="">
+                            <div class="match-node-team">Alemanha</div>
+                        </div>
+                        <div class="match-node-vs">1 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/py.png" class="team-flag" alt="">
+                            <div class="match-node-team">Paraguai (P)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 102</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/fr.png" class="team-flag" alt="">
+                            <div class="match-node-team">França</div>
+                        </div>
+                        <div class="match-node-vs">3 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/se.png" class="team-flag" alt="">
+                            <div class="match-node-team">Suécia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 103</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/za.png" class="team-flag" alt="">
+                            <div class="match-node-team">África do Sul</div>
+                        </div>
+                        <div class="match-node-vs">0 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ca.png" class="team-flag" alt="">
+                            <div class="match-node-team">Canadá</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 104</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ma.png" class="team-flag" alt="">
+                            <div class="match-node-team">Marrocos (P)</div>
+                        </div>
+                        <div class="match-node-vs">1 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/nl.png" class="team-flag" alt="">
+                            <div class="match-node-team">Holanda</div>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 105</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/pt.png" class="team-flag" alt="">
+                            <div class="match-node-team">Portugal</div>
+                        </div>
+                        <div class="match-node-vs">2 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/hr.png" class="team-flag" alt="">
+                            <div class="match-node-team">Croácia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 106</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/es.png" class="team-flag" alt="">
+                            <div class="match-node-team">Espanha</div>
+                        </div>
+                        <div class="match-node-vs">3 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/at.png" class="team-flag" alt="">
+                            <div class="match-node-team">Áustria</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 107</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/us.png" class="team-flag" alt="">
+                            <div class="match-node-team">EUA</div>
+                        </div>
+                        <div class="match-node-vs">2 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ba.png" class="team-flag" alt="">
+                            <div class="match-node-team">Bósnia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 108</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/be.png" class="team-flag" alt="">
+                            <div class="match-node-team">Bélgica</div>
+                        </div>
+                        <div class="match-node-vs">3 - 2</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/sn.png" class="team-flag" alt="">
+                            <div class="match-node-team">Senegal</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 121</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/py.png" class="team-flag" alt="">
+                            <div class="match-node-team">Paraguai</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/fr.png" class="team-flag" alt="">
+                            <div class="match-node-team">França</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 122</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ca.png" class="team-flag" alt="">
+                            <div class="match-node-team">Canadá</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ma.png" class="team-flag" alt="">
+                            <div class="match-node-team">Marrocos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 123</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/pt.png" class="team-flag" alt="">
+                            <div class="match-node-team">Portugal</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/es.png" class="team-flag" alt="">
+                            <div class="match-node-team">Espanha</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 124</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/us.png" class="team-flag" alt="">
+                            <div class="match-node-team">EUA</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/be.png" class="team-flag" alt="">
+                            <div class="match-node-team">Bélgica</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 131</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 121</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 122</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 132</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 123</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 124</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 141</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 131</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 132</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column center-column">
+                    <div style="font-size: 1.6em; text-align: center; color: var(--gold-primary); letter-spacing: 5px; font-weight: bold; margin-bottom:-10px;">FINAL</div>
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 150</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 141</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 142</div>
+                        </div>
+                    </div>
+                </div>
+                    
+                    <div class="trophy-container">
+                        <svg class="trophy-svg" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="35" r="22" fill="url(#gold-grad)"/>
+                            <path d="M34 25 C 40 20, 60 20, 66 25 M30 35 C 40 32, 60 32, 70 35 M34 45 C 40 50, 60 50, 66 45" stroke="#684c12" stroke-width="1" fill="none" opacity="0.4"/>
+                            <path d="M38 54 C35 65, 42 85, 44 115 L56 115 C58 85, 65 65, 62 54 C55 58, 45 58, 38 54 Z" fill="url(#gold-grad)"/>
+                            <path d="M38 54 C43 65, 45 75, 46 115 M62 54 C57 65, 55 75, 54 115" stroke="#52390b" stroke-width="1.5" fill="none"/>
+                            <rect x="40" y="115" width="20" height="8" fill="#1b4d22" rx="1"/>
+                            <rect x="38" y="123" width="24" height="6" fill="url(#gold-grad)" rx="1"/>
+                            <rect x="36" y="129" width="28" height="8" fill="#1b4d22" rx="1"/>
+                            <rect x="32" y="137" width="36" height="12" fill="url(#gold-grad)" rx="2"/>
+                            <defs>
+                                <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff4cc" />
+                                    <stop offset="40%" stop-color="#d4af37" />
+                                    <stop offset="70%" stop-color="#aa7c11" />
+                                    <stop offset="100%" stop-color="#5a4004" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div style="color: var(--gold-primary); font-size: 1.3em; letter-spacing: 4px; margin-top: 10px; font-weight: bold; text-transform: uppercase;">CAMPEÃO</div>
+                    </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 142</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 133</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 134</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 133</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 125</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 126</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 134</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 127</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <div class="team-flag-placeholder">?</div>
+                            <div class="match-node-team">Venc 128</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 125</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/br.png" class="team-flag" alt="">
+                            <div class="match-node-team">Brasil</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/no.png" class="team-flag" alt="">
+                            <div class="match-node-team">Noruega</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 126</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/mx.png" class="team-flag" alt="">
+                            <div class="match-node-team">México</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/gb-eng.png" class="team-flag" alt="">
+                            <div class="match-node-team">Inglaterra</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 127</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ar.png" class="team-flag" alt="">
+                            <div class="match-node-team">Argentina</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/eg.png" class="team-flag" alt="">
+                            <div class="match-node-team">Egito</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node ">
+                    <div class="match-node-title">JOGO 128</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ch.png" class="team-flag" alt="">
+                            <div class="match-node-team">Suíça</div>
+                        </div>
+                        <div class="match-node-vs">VS</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/co.png" class="team-flag" alt="">
+                            <div class="match-node-team">Colômbia</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="bracket-column">
+                    
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 109</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/br.png" class="team-flag" alt="">
+                            <div class="match-node-team">Brasil</div>
+                        </div>
+                        <div class="match-node-vs">2 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/jp.png" class="team-flag" alt="">
+                            <div class="match-node-team">Japão</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 110</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ci.png" class="team-flag" alt="">
+                            <div class="match-node-team">Costa do Marfim</div>
+                        </div>
+                        <div class="match-node-vs">1 - 2</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/no.png" class="team-flag" alt="">
+                            <div class="match-node-team">Noruega</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 111</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/mx.png" class="team-flag" alt="">
+                            <div class="match-node-team">México</div>
+                        </div>
+                        <div class="match-node-vs">2 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ec.png" class="team-flag" alt="">
+                            <div class="match-node-team">Equador</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 112</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/gb-eng.png" class="team-flag" alt="">
+                            <div class="match-node-team">Inglaterra</div>
+                        </div>
+                        <div class="match-node-vs">2 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/cd.png" class="team-flag" alt="">
+                            <div class="match-node-team">RD Congo</div>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 113</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ar.png" class="team-flag" alt="">
+                            <div class="match-node-team">Argentina</div>
+                        </div>
+                        <div class="match-node-vs">3 - 2</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/cv.png" class="team-flag" alt="">
+                            <div class="match-node-team">Cabo Verde</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 114</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/au.png" class="team-flag" alt="">
+                            <div class="match-node-team">Austrália</div>
+                        </div>
+                        <div class="match-node-vs">1 - 1</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/eg.png" class="team-flag" alt="">
+                            <div class="match-node-team">Egito (P)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 115</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/ch.png" class="team-flag" alt="">
+                            <div class="match-node-team">Suíça</div>
+                        </div>
+                        <div class="match-node-vs">2 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/dz.png" class="team-flag" alt="">
+                            <div class="match-node-team">Argélia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-node has-result">
+                    <div class="match-node-title">JOGO 116</div>
+                    <div class="match-node-teams">
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/co.png" class="team-flag" alt="">
+                            <div class="match-node-team">Colômbia</div>
+                        </div>
+                        <div class="match-node-vs">1 - 0</div>
+                        <div class="match-team-box">
+                            <img src="https://flagcdn.com/w40/gh.png" class="team-flag" alt="">
+                            <div class="match-node-team">Gana</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="content-section"><h2 class="section-title">📋 Palpites Registrados do Mata-Mata</h2><details><summary>🏅 Palpites de ANTONIO</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div></div></details><details><summary>🏅 Palpites de CAUA</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">4 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de DIEGO</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de EDUARDO</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div></div></details><details><summary>🏅 Palpites de FELIPE ALVES</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">4 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div></div></details><details><summary>🏅 Palpites de FELIPE FIRMO</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">0 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div></div></details><details><summary>🏅 Palpites de GLEISON</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">4 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div></div></details><details><summary>🏅 Palpites de IOMAR</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">0 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de JEFFERSON</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">4 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">2 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">2 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de NAUANNY</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">2 x 4</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">2 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de RAYALA</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div></div></details><details><summary>🏅 Palpites de SAMUEL</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">2 x 1</span></div></div></div></details><details><summary>🏅 Palpites de SOSTENES</summary><div class='guesses-grid'><div class="guess-card"><div class="guess-header"><span>Jogo 101</span></div><div class="guess-match">Alemanha x Paraguai</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 102</span></div><div class="guess-match">França x Suécia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 103</span></div><div class="guess-match">África do Sul x Canadá</div><div class="guess-footer"><span class="badge badge-pending">3 x 2</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 104</span></div><div class="guess-match">Marrocos x Holanda</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 105</span></div><div class="guess-match">Portugal x Croácia</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 106</span></div><div class="guess-match">Espanha x Áustria</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 107</span></div><div class="guess-match">EUA x Bósnia</div><div class="guess-footer"><span class="badge badge-pending">3 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 108</span></div><div class="guess-match">Bélgica x Senegal</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 109</span></div><div class="guess-match">Brasil x Japão</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 110</span></div><div class="guess-match">Costa do Marfim x Noruega</div><div class="guess-footer"><span class="badge badge-pending">1 x 3</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 111</span></div><div class="guess-match">México x Equador</div><div class="guess-footer"><span class="badge badge-pending">2 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 112</span></div><div class="guess-match">Inglaterra x RD Congo</div><div class="guess-footer"><span class="badge badge-pending">0 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 113</span></div><div class="guess-match">Argentina x Cabo Verde</div><div class="guess-footer"><span class="badge badge-pending">4 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 114</span></div><div class="guess-match">Austrália x Egito</div><div class="guess-footer"><span class="badge badge-pending">1 x 1</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 115</span></div><div class="guess-match">Suíça x Argélia</div><div class="guess-footer"><span class="badge badge-pending">3 x 0</span></div></div><div class="guess-card"><div class="guess-header"><span>Jogo 116</span></div><div class="guess-match">Colômbia x Gana</div><div class="guess-footer"><span class="badge badge-pending">1 x 0</span></div></div></div></details></div><footer>Atualizado via Python em: 04/07/2026 10:02:30</footer></div></body></html>
